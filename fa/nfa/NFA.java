@@ -9,12 +9,16 @@ public class NFA implements NFAInterface {
     // **Instance Variables**
 
     // All the state in the NFA
-    public Set<NFAState> allStates;
+    public Set<NFAState> allStates; // Visibility for testing
+
+    public // Final States
+    Set<NFAState> finalStates; // Visibility for testing
 
     // **Constructor**
     public NFA() {
         // LinkedHashSet being used as it maintains order.
         this.allStates = new LinkedHashSet<>();
+        this.finalStates = new LinkedHashSet<>();
     }
 
     @Override
@@ -35,11 +39,25 @@ public class NFA implements NFAInterface {
     @Override
     public boolean setFinal(String name) {
         // Given a state name find that state in allStates
-        // Check state with given name is in allStates
+        NFAState newFinalState = (NFAState) getState(name);
+
+        // Check if a state with that name was found
+        if (newFinalState == (null)) {
+            return false; // Not Found
+        }
+
+        // Check state with given name is in finalStates
+        if (finalStates.contains(newFinalState)) {
+            return false; // Is already a final state
+        }
 
         // Set that state to be final state
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setStart'");
+        finalStates.add(newFinalState);
+
+        // ?? We might need update the state’s status to final not just add to set of
+        // ?? final states
+        newFinalState.setIsFinal(true);
+        return true;
     }
 
     @Override
