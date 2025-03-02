@@ -3,8 +3,12 @@ package fa.nfa;
 import fa.State;
 
 public class NFAState extends State {
+    // Instance variable
+    boolean isFinal;
+
     public NFAState(String name) {
         super(name);
+        isFinal = false;
     }
 
     /**
@@ -19,6 +23,24 @@ public class NFAState extends State {
         // Cast newState to be a DFAState
         NFAState other = (NFAState) newState;
         return this.getName().equals(other.getName());
+    }
+
+    /**
+     * Sets states isFinal boolean to be either true or false
+     * 
+     * @param isFinal - whether or not state is final
+     */
+    public void setIsFinal(boolean isFinal) {
+        this.isFinal = isFinal;
+    }
+
+    /**
+     * Returns if states isFinal
+     * 
+     * @return whether or not state is final
+     */
+    public boolean getIsFinal() {
+        return this.isFinal;
     }
 
     // Allows us to compare based on name
