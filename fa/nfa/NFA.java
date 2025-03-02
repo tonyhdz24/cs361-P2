@@ -1,15 +1,35 @@
 package fa.nfa;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import fa.State;
 
 public class NFA implements NFAInterface {
+    // **Instance Variables**
+
+    // All the state in the NFA
+    public Set<NFAState> allStates;
+
+    // **Constructor**
+    public NFA() {
+        // LinkedHashSet being used as it maintains order.
+        this.allStates = new LinkedHashSet<>();
+    }
 
     @Override
     public boolean addState(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addState'");
+        // Creating new state with given name
+        NFAState newState = new NFAState(name);
+
+        // Check if it is a new state
+        if (allStates.contains(newState)) {
+            return false; // State with that name already exists
+        }
+
+        // Add state to NFA
+        return allStates.add(newState);
+
     }
 
     @Override
@@ -89,7 +109,5 @@ public class NFA implements NFAInterface {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isDFA'");
     }
-
-    
 
 }
