@@ -10,9 +10,8 @@ public class NFA implements NFAInterface {
 
     // All the state in the NFA
     public Set<NFAState> allStates; // Visibility for testing
-
-    public // Final States
-    Set<NFAState> finalStates; // Visibility for testing
+    // Final States
+    public Set<NFAState> finalStates; // Visibility for testing
 
     // **Constructor**
     public NFA() {
