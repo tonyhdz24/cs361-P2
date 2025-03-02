@@ -34,8 +34,12 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean setFinal(String name) {
+        // Given a state name find that state in allStates
+        // Check state with given name is in allStates
+
+        // Set that state to be final state
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setFinal'");
+        throw new UnsupportedOperationException("Unimplemented method 'setStart'");
     }
 
     @Override
@@ -64,8 +68,16 @@ public class NFA implements NFAInterface {
 
     @Override
     public State getState(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getState'");
+
+        // Loop through all states in allStates
+        for (NFAState state : allStates) {
+            // Find the one that has the same name as given name
+            if (state.getName().equals(name)) {
+                return state;
+            }
+        }
+        // Return null of state is NOT in allStates
+        return null;
     }
 
     @Override
