@@ -63,8 +63,8 @@ public class NFA implements NFAInterface {
     @Override
     public boolean setStart(String name) {
         NFAState target = new NFAState(name);
-        if(allStates.contains(target)){
-            //Need to make sure the state stored in q0 and allstates is the same one.
+        if (allStates.contains(target)) {
+            // Need to make sure the state stored in q0 and allstates is the same one.
             allStates.remove(target);
             q0 = target;
             allStates.add(target);
@@ -107,9 +107,13 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean isFinal(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isFinal'");
-    }
+        NFAState state = new NFAState(name);
+        // Check if state with given name is in set of final states
+        if (finalStates.contains(state)) {
+            return true;
+        }
+        return false;
+       }
 
     @Override
     public boolean isStart(String name) {
