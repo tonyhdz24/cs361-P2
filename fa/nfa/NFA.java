@@ -12,6 +12,7 @@ public class NFA implements NFAInterface {
     public Set<NFAState> allStates; // Visibility for testing
     // Final States
     public Set<NFAState> finalStates; // Visibility for testing
+    public NFAState q0;
 
     // **Constructor**
     public NFA() {
@@ -61,8 +62,15 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean setStart(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setStart'");
+        NFAState target = new NFAState(name);
+        if(allStates.contains(target)){
+            //Need to make sure the state stored in q0 and allstates is the same one.
+            allStates.remove(target);
+            q0 = target;
+            allStates.add(target);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -105,8 +113,8 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean isStart(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isStart'");
+        NFAState target = new NFAState(name);
+        return q0.equals(target);
     }
 
     @Override
