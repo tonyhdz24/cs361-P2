@@ -1,5 +1,6 @@
 package fa.nfa;
 
+import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ public class NFA implements NFAInterface {
     public Set<NFAState> allStates; // Visibility for testing
     // Final States
     public Set<NFAState> finalStates; // Visibility for testing
+    // Transitions
+    public Hashtable<Hashtable<NFAState, Character>, Set<NFAState>> transitions; // Visibility for testing
     public NFAState q0;
 
     // **Constructor**
@@ -21,6 +24,10 @@ public class NFA implements NFAInterface {
         this.allStates = new LinkedHashSet<>();
         this.sigma = new LinkedHashSet<>();
         this.finalStates = new LinkedHashSet<>();
+        this.transitions = new Hashtable<>();
+
+        // Adding epsilon to alphabet for e transitions
+        this.addSigma('e');
     }
 
     @Override
@@ -146,8 +153,34 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addTransition'");
+        // Validate symbol
+        if (!sigma.contains(onSymb)) {
+            return false; // onSymb not in alphabet
+        }
+        // Validate fromState
+        NFAState NFAFromState = new NFAState(fromState);
+        if (!allStates.contains(NFAFromState)) {
+            return false; // NFAFromState not in set of acceptable states
+        }
+
+        // Validate toStates - all of them
+        // A set of all the to states given in toStates string input
+        Set<NFAState> allToStates = new LinkedHashSet<>();
+        for (String toStateName : toStates) {
+            NFAState possibleToState = new NFAState(toStateName);
+            // check possibleToState is in set of states
+            if (!allStates.contains(possibleToState)) {
+                return false;
+            }
+            // possibleToState is valid add to possible allToStates
+            allToStates.add(possibleToState);
+        }
+
+        // Updating transition map
+        Hashtable<NFAState, Character> path = new Hashtable<>(1);
+        path.put(NFAFromState, onSymb);
+        transitions.put(path, allToStates);
+        return true;
     }
 
     @Override
