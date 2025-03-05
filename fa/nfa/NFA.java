@@ -2,6 +2,7 @@ package fa.nfa;
 
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import fa.State;
@@ -185,8 +186,21 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean isDFA() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isDFA'");
+        // for all the transitions the check the key for 'e' and the value to length = 1
+        for (Entry<Hashtable<NFAState, Character>, Set<NFAState>> transition : transitions.entrySet()) {
+            // Check each transition has ONLY ONE to State
+            if (transition.getValue().size() > 1) {
+                System.out.println("size");
+                return false;
+
+            }
+            // Check no 'e' transitions
+            if (transition.getKey().contains('e')) {
+                return false;
+            }
+        }
+        // Is a DFA
+        return true;
     }
 
 }
