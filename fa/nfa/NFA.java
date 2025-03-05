@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Iterator;
 
 import fa.State;
 
@@ -142,8 +143,31 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'eClosure'");
+        Set<NFAState> eClosures = new LinkedHashSet<NFAState>();
+        eClosures.add(s);
+        eClosures = eClosureSetBuilder(eClosures, s);
+        return eClosures;
+    }
+
+    /**
+     * Recursive function to explore all reachable states through Epsilon "e" from a given state
+     * 
+     * @param set - the in progress set
+     * @param s - the current state to explore the "e" transitions
+     * @return - Upon completion the all reachable states from "e".
+     */
+    private Set<NFAState> eClosureSetBuilder(Set<NFAState> set, NFAState s) {
+        Set<NFAState> eTransitions = this.getToState(s, 'e');
+        Iterator<NFAState> iterE = eTransitions.iterator();
+        while (iterE.hasNext()){
+            NFAState nextState = iterE.next();
+            if (!set.contains(nextState)){ //Prevents unnecessary branches
+                set.add(nextState);
+                set = eClosureSetBuilder(set, nextState);
+            }
+        }
+        return set;
+
     }
 
     @Override
