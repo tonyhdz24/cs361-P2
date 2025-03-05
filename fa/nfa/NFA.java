@@ -7,7 +7,8 @@ import fa.State;
 
 public class NFA implements NFAInterface {
     // **Instance Variables**
-
+    // Store all characters that make up the Alphabet
+    public Set<Character> sigma; // Visibility for testing
     // All the state in the NFA
     public Set<NFAState> allStates; // Visibility for testing
     // Final States
@@ -18,6 +19,7 @@ public class NFA implements NFAInterface {
     public NFA() {
         // LinkedHashSet being used as it maintains order.
         this.allStates = new LinkedHashSet<>();
+        this.sigma = new LinkedHashSet<>();
         this.finalStates = new LinkedHashSet<>();
     }
 
@@ -75,8 +77,12 @@ public class NFA implements NFAInterface {
 
     @Override
     public void addSigma(char symbol) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addSigma'");
+        // Checking if symbol is already part of alphabet
+        if (sigma.contains(symbol)) {
+            return; // Prevents Duplicate Symbols
+        }
+        // Adding symbol to sigma set
+        sigma.add(symbol);
     }
 
     @Override
@@ -87,8 +93,7 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<Character> getSigma() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSigma'");
+        return sigma;
     }
 
     @Override
@@ -113,7 +118,7 @@ public class NFA implements NFAInterface {
             return true;
         }
         return false;
-       }
+    }
 
     @Override
     public boolean isStart(String name) {
