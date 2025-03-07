@@ -19,9 +19,7 @@ public class NFA implements NFAInterface {
     // Final States
     public Set<NFAState> finalStates; // Visibility for testing
     // Transitions
-    // public Hashtable<Hashtable<NFAState, Character>, Set<NFAState>> transitions;
-    // // Visibility for testing
-    public Map<NFAState, Map<Character, Set<NFAState>>> transitions;
+    public Map<NFAState, Map<Character, Set<NFAState>>> transitions; // Visibility for testing
 
     public NFAState q0;
 
@@ -31,7 +29,6 @@ public class NFA implements NFAInterface {
         this.allStates = new LinkedHashSet<>();
         this.sigma = new LinkedHashSet<>();
         this.finalStates = new LinkedHashSet<>();
-        // this.transitions = new Hashtable<>();
         this.transitions = new HashMap<>();
 
         // Adding epsilon to alphabet for e transitions
