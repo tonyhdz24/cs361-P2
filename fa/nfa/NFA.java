@@ -1,7 +1,10 @@
 package fa.nfa;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Iterator;
@@ -17,7 +20,8 @@ public class NFA implements NFAInterface {
     // Final States
     public Set<NFAState> finalStates; // Visibility for testing
     // Transitions
-    public Hashtable<Hashtable<NFAState, Character>, Set<NFAState>> transitions; // Visibility for testing
+    public Map<NFAState, Map<Character, Set<NFAState>>> transitions; // Visibility for testing
+
     public NFAState q0;
 
     // **Constructor**
@@ -26,7 +30,7 @@ public class NFA implements NFAInterface {
         this.allStates = new LinkedHashSet<>();
         this.sigma = new LinkedHashSet<>();
         this.finalStates = new LinkedHashSet<>();
-        this.transitions = new Hashtable<>();
+        this.transitions = new HashMap<>();
 
         // Adding epsilon to alphabet for e transitions
         this.addSigma('e');
@@ -137,8 +141,16 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getToState'");
+        if (!transitions.containsKey(from)) {
+            return new HashSet<>(); // No transitions from this state
+        }
+
+        Map<Character, Set<NFAState>> stateTransitions = transitions.get(from);
+        if (stateTransitions == null || !stateTransitions.containsKey(onSymb)) {
+            return new HashSet<>(); // No transition for this symbol
+        }
+
+        return stateTransitions.get(onSymb); // Return the states that can be reached
     }
 
     @Override
@@ -189,42 +201,47 @@ public class NFA implements NFAInterface {
         }
 
         // Validate toStates - all of them
-        // A set of all the to states given in toStates string input
-        Set<NFAState> allToStates = new LinkedHashSet<>();
+        Set<NFAState> toStatesSet = new HashSet<>();
+
         for (String toStateName : toStates) {
-            NFAState possibleToState = new NFAState(toStateName);
+            NFAState possibleToState = (NFAState) getState(toStateName);
             // check possibleToState is in set of states
-            if (!allStates.contains(possibleToState)) {
+            if (possibleToState == null) {
                 return false;
             }
             // possibleToState is valid add to possible allToStates
-            allToStates.add(possibleToState);
+            toStatesSet.add(possibleToState);
         }
 
         // Updating transition map
-        Hashtable<NFAState, Character> path = new Hashtable<>(1);
-        path.put(NFAFromState, onSymb);
-        transitions.put(path, allToStates);
+        // Creating the inner transition map for fromState
+        transitions.putIfAbsent(NFAFromState, new HashMap<>());
+
+        // Add or update the transition for fromState
+        transitions.get(NFAFromState).put(onSymb, toStatesSet);
         return true;
     }
 
     @Override
     public boolean isDFA() {
-        // for all the transitions the check the key for 'e' and the value to length = 1
-        for (Entry<Hashtable<NFAState, Character>, Set<NFAState>> transition : transitions.entrySet()) {
-            // Check each transition has ONLY ONE to State
-            if (transition.getValue().size() > 1) {
-                System.out.println("size");
-                return false;
+        // For all the transitions check the key for 'e' and the value to length = 1
+        for (Entry<NFAState, Map<Character, Set<NFAState>>> transition : transitions.entrySet()) {
+            // Get the transition map for this state
+            Map<Character, Set<NFAState>> transitionMap = transition.getValue();
 
+            // Check for epsilon ('e') transitions
+            if (transitionMap.containsKey('e')) {
+                return false; // NFA detected
             }
-            // Check no 'e' transitions
-            if (transition.getKey().contains('e')) {
-                return false;
+
+            // Check that each symbol maps to at most one state (deterministic)
+            for (Set<NFAState> toStates : transitionMap.values()) {
+                if (toStates.size() > 1) {
+                    return false; // Non-deterministic transition found
+                }
             }
         }
-        // Is a DFA
-        return true;
+        return true; // If no NFA properties found, it's a DFA
     }
 
 }
