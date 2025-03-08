@@ -162,6 +162,23 @@ public class NFA implements NFAInterface {
     }
 
     /**
+     * Overloaded method
+     * Rebinds the state into an equivalent NFAState to pass to eClosure(NFAState)
+     *
+     * @param state - The target state to find all E-Closures for.
+     * @return null - on state not found, A set of the E-Closures for the state in normal operation
+     */
+    public Set<NFAState> eClosure(State state) {
+        for( NFAState current: allStates){
+            if(current.equals(state)){
+                return eClosure(current);
+            }
+        }
+        //State not found
+        return null;
+    }
+
+    /**
      * Recursive function to explore all reachable states through Epsilon "e" from a given state
      * 
      * @param set - the in progress set
