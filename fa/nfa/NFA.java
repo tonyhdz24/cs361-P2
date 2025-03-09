@@ -11,6 +11,11 @@ import java.util.Iterator;
 
 import fa.State;
 
+/**
+ * @author Antonio Hernandez, Zach Johnston
+ *
+ * TODO: Documentation for constructor and class
+ */
 public class NFA implements NFAInterface {
     // **Instance Variables**
     // Store all characters that make up the Alphabet
@@ -180,19 +185,23 @@ public class NFA implements NFAInterface {
 
     /**
      * Recursive function to explore all reachable states through Epsilon "e" from a given state
+     * First this method gets all transitions off this state by epsilon "e" (Breadth First), then
+     * through recursion explores how far branches can go (Depth First).
      * 
      * @param set - the in progress set
      * @param s - the current state to explore the "e" transitions
      * @return - Upon completion the all reachable states from "e".
      */
     private Set<NFAState> eClosureSetBuilder(Set<NFAState> set, NFAState s) {
-        Set<NFAState> eTransitions = this.getToState(s, 'e');
-        Iterator<NFAState> iterE = eTransitions.iterator();
-        while (iterE.hasNext()){
-            NFAState nextState = iterE.next();
-            if (!set.contains(nextState)){ //Prevents unnecessary branches
-                set.add(nextState);
-                set = eClosureSetBuilder(set, nextState);
+        Set<NFAState> sTransitions = transitions.get(s).get("e");
+        if(sTransitions != null) {
+            Iterator<NFAState> iterE = sTransitions.iterator();
+            while (iterE.hasNext()) {
+                NFAState nextState = iterE.next();
+                if (!set.contains(nextState)) { //Prevents unnecessary branches
+                    set.add(nextState);
+                    set = eClosureSetBuilder(set, nextState);
+                }
             }
         }
         return set;
