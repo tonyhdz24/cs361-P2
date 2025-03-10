@@ -14,7 +14,7 @@ import fa.State;
 /**
  * @author Antonio Hernandez, Zach Johnston
  *
- * TODO: Documentation for constructor and class
+ *         TODO: Documentation for constructor and class
  */
 public class NFA implements NFAInterface {
     // **Instance Variables**
@@ -171,34 +171,37 @@ public class NFA implements NFAInterface {
      * Rebinds the state into an equivalent NFAState to pass to eClosure(NFAState)
      *
      * @param state - The target state to find all E-Closures for.
-     * @return null - on state not found, A set of the E-Closures for the state in normal operation
+     * @return null - on state not found, A set of the E-Closures for the state in
+     *         normal operation
      */
     public Set<NFAState> eClosure(State state) {
-        for( NFAState current: allStates){
-            if(current.equals(state)){
+        for (NFAState current : allStates) {
+            if (current.equals(state)) {
                 return eClosure(current);
             }
         }
-        //State not found
+        // State not found
         return null;
     }
 
     /**
-     * Recursive function to explore all reachable states through Epsilon "e" from a given state
-     * First this method gets all transitions off this state by epsilon "e" (Breadth First), then
+     * Recursive function to explore all reachable states through Epsilon "e" from a
+     * given state
+     * First this method gets all transitions off this state by epsilon "e" (Breadth
+     * First), then
      * through recursion explores how far branches can go (Depth First).
      * 
      * @param set - the in progress set
-     * @param s - the current state to explore the "e" transitions
+     * @param s   - the current state to explore the "e" transitions
      * @return - Upon completion the all reachable states from "e".
      */
     private Set<NFAState> eClosureSetBuilder(Set<NFAState> set, NFAState s) {
-        Set<NFAState> sTransitions = transitions.get(s).get("e");
-        if(sTransitions != null) {
+        Set<NFAState> sTransitions = transitions.get(s).get('e');
+        if (sTransitions != null) {
             Iterator<NFAState> iterE = sTransitions.iterator();
             while (iterE.hasNext()) {
                 NFAState nextState = iterE.next();
-                if (!set.contains(nextState)) { //Prevents unnecessary branches
+                if (!set.contains(nextState)) { // Prevents unnecessary branches
                     set.add(nextState);
                     set = eClosureSetBuilder(set, nextState);
                 }
