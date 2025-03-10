@@ -14,7 +14,7 @@ import fa.State;
 /**
  * @author Antonio Hernandez, Zach Johnston
  *
- * TODO: Documentation for constructor and class
+ *         TODO: Documentation for constructor and class
  */
 public class NFA implements NFAInterface {
     // **Instance Variables**
@@ -52,7 +52,9 @@ public class NFA implements NFAInterface {
         }
 
         // Add state to NFA
-        return allStates.add(newState);
+        allStates.add(newState);
+        transitions.put(newState, new HashMap<>()); // Initialize transition entry
+        return true;
 
     }
 
@@ -82,15 +84,13 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean setStart(String name) {
-        NFAState target = new NFAState(name);
-        if (allStates.contains(target)) {
-            // Need to make sure the state stored in q0 and allstates is the same one.
-            allStates.remove(target);
-            q0 = target;
-            allStates.add(target);
-            return true;
+        NFAState startState = (NFAState) getState(name);
+        if (startState == null) {
+            return false;
         }
-        return false;
+        q0 = startState;
+        return true;
+
     }
 
     @Override
@@ -171,34 +171,41 @@ public class NFA implements NFAInterface {
      * Rebinds the state into an equivalent NFAState to pass to eClosure(NFAState)
      *
      * @param state - The target state to find all E-Closures for.
-     * @return null - on state not found, A set of the E-Closures for the state in normal operation
+     * @return null - on state not found, A set of the E-Closures for the state in
+     *         normal operation
      */
     public Set<NFAState> eClosure(State state) {
-        for( NFAState current: allStates){
-            if(current.equals(state)){
+        for (NFAState current : allStates) {
+            if (current.equals(state)) {
                 return eClosure(current);
             }
         }
-        //State not found
+        // State not found
         return null;
     }
 
     /**
-     * Recursive function to explore all reachable states through Epsilon "e" from a given state
-     * First this method gets all transitions off this state by epsilon "e" (Breadth First), then
+     * Recursive function to explore all reachable states through Epsilon "e" from a
+     * given state
+     * First this method gets all transitions off this state by epsilon "e" (Breadth
+     * First), then
      * through recursion explores how far branches can go (Depth First).
      * 
      * @param set - the in progress set
-     * @param s - the current state to explore the "e" transitions
+     * @param s   - the current state to explore the "e" transitions
      * @return - Upon completion the all reachable states from "e".
      */
     private Set<NFAState> eClosureSetBuilder(Set<NFAState> set, NFAState s) {
-        Set<NFAState> sTransitions = transitions.get(s).get("e");
-        if(sTransitions != null) {
+        // Check if the state has any transitions; otherwise, return the current set
+        if (!transitions.containsKey(s)) {
+            return set;
+        }
+        Set<NFAState> sTransitions = transitions.get(s).get('e');
+        if (sTransitions != null) {
             Iterator<NFAState> iterE = sTransitions.iterator();
             while (iterE.hasNext()) {
                 NFAState nextState = iterE.next();
-                if (!set.contains(nextState)) { //Prevents unnecessary branches
+                if (!set.contains(nextState)) { // Prevents unnecessary branches
                     set.add(nextState);
                     set = eClosureSetBuilder(set, nextState);
                 }
@@ -210,8 +217,42 @@ public class NFA implements NFAInterface {
 
     @Override
     public int maxCopies(String s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'maxCopies'");
+        // Start with start States epsilon closure
+        Set<NFAState> currentStates = eClosure(q0);
+        System.out.println("    => Current states: " + currentStates);
+
+        // Start tracking the number of copies nfa can have
+        int maxCopies = currentStates.size();
+
+        // Loop over each char in the input string
+        for (char c : s.toCharArray()) {
+            // Stores all states reachable from currentState
+            Set<NFAState> nextStates = new HashSet<>();
+
+            // For each currently active state in currentState we check which states can be
+            System.out.println("    => Before Next states: " + nextStates);
+
+            // reached using the transition symbol "c"
+            for (NFAState state : currentStates) {
+                // To nextStates we add a set of to states given c
+                nextStates.addAll(getToState(state, c));
+                System.out.println("    => After Next states: " + nextStates);
+            }
+
+            // Get epsilon closure for all new states
+            Set<NFAState> eClosureStates = new HashSet<>();
+
+            System.out.println("    => eClosure states: " + eClosureStates);
+            for (NFAState state : nextStates) {
+                eClosureStates.addAll(eClosure(state));
+            }
+
+            // Update currentStates and track max number of active states
+            currentStates = eClosureStates;
+            maxCopies = Math.max(maxCopies, currentStates.size());
+        }
+
+        return maxCopies;
     }
 
     @Override
@@ -239,12 +280,14 @@ public class NFA implements NFAInterface {
             toStatesSet.add(possibleToState);
         }
 
+        System.out.println(transitions);
         // Updating transition map
         // Creating the inner transition map for fromState
         transitions.putIfAbsent(NFAFromState, new HashMap<>());
 
         // Add or update the transition for fromState
         transitions.get(NFAFromState).put(onSymb, toStatesSet);
+        System.out.println(transitions);
         return true;
     }
 
