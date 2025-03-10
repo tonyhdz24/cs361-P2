@@ -279,15 +279,22 @@ public class NFA implements NFAInterface {
             // possibleToState is valid add to possible allToStates
             toStatesSet.add(possibleToState);
         }
-
-        System.out.println(transitions);
         // Updating transition map
-        // Creating the inner transition map for fromState
-        transitions.putIfAbsent(NFAFromState, new HashMap<>());
 
-        // Add or update the transition for fromState
-        transitions.get(NFAFromState).put(onSymb, toStatesSet);
-        System.out.println(transitions);
+        // Check if fromState transitioning on onSymb already has a toState
+        if (transitions.get(NFAFromState).get(onSymb) != null) {
+            // Adding all the new toStates to the set of toStates that already exist on
+            // onSymb
+            for (NFAState nfaState : toStatesSet) {
+                transitions.get(NFAFromState).get(onSymb).add(nfaState);
+            }
+        } else {
+            // Creating the inner transition map for fromState
+            transitions.putIfAbsent(NFAFromState, new HashMap<>());
+            // Add or update the transition for fromState
+            transitions.get(NFAFromState).put(onSymb, toStatesSet);
+
+        }
         return true;
     }
 
