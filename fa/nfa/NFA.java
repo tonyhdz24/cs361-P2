@@ -219,7 +219,6 @@ public class NFA implements NFAInterface {
     public int maxCopies(String s) {
         // Start with start States epsilon closure
         Set<NFAState> currentStates = eClosure(q0);
-        System.out.println("    => Current states: " + currentStates);
 
         // Start tracking the number of copies nfa can have
         int maxCopies = currentStates.size();
@@ -230,19 +229,15 @@ public class NFA implements NFAInterface {
             Set<NFAState> nextStates = new HashSet<>();
 
             // For each currently active state in currentState we check which states can be
-            System.out.println("    => Before Next states: " + nextStates);
 
             // reached using the transition symbol "c"
             for (NFAState state : currentStates) {
                 // To nextStates we add a set of to states given c
                 nextStates.addAll(getToState(state, c));
-                System.out.println("    => After Next states: " + nextStates);
             }
 
             // Get epsilon closure for all new states
             Set<NFAState> eClosureStates = new HashSet<>();
-
-            System.out.println("    => eClosure states: " + eClosureStates);
             for (NFAState state : nextStates) {
                 eClosureStates.addAll(eClosure(state));
             }
