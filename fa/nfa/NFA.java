@@ -7,6 +7,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.junit.After;
+
 import java.util.Iterator;
 
 import fa.State;
@@ -105,8 +108,44 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean accepts(String s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'accepts'");
+        // Start with e-closure of the start state
+        Set<NFAState> reachAbleStates = this.eClosure(q0);
+
+        // Iterate over the input string character by character
+        // For each symbol in the string create a new set of states the NFA can
+        // transition to from the current states.
+        for (char transitionSymbol : s.toCharArray()) {
+            // Tracks states after transition
+            Set<NFAState> nextStates = new LinkedHashSet<>();
+
+            // For each reachable state in reachAbleStates get the possible transitions from
+            // each on transition symbol
+            for (NFAState nfaState : reachAbleStates) {
+                // Use getToState(state, symbol) to find all possible next states
+                Set<NFAState> possibleToStates = getToState(nfaState, transitionSymbol);
+
+                // For all the states we can transition to we add the eClosure of that state to
+                // the set of states machine can be in
+                for (NFAState toState : possibleToStates) {
+                    nextStates.addAll(eClosure(toState));
+                }
+            }
+            // Once all possible next states for a given transition symbol have been found
+            // and added to nextStates
+            // Update reachAbleStates to be nextStates for the next symbol
+            reachAbleStates = nextStates;
+
+        }
+
+        // After looping though input string loop through all the states we could be in
+        // and check if at least on is a final state
+        for (NFAState nfaState : reachAbleStates) {
+            if (finalStates.contains(nfaState)) {
+                return true;
+            }
+        }
+        return false;
+
     }
 
     @Override
