@@ -131,7 +131,7 @@ public class NFA implements NFAInterface {
                 }
             }
             // Once all possible next states for a given transition symbol have been found
-            // and added to nextStates
+            // add to nextStates
             // Update reachAbleStates to be nextStates for the next symbol
             reachAbleStates = nextStates;
 
