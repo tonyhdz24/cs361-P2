@@ -2,22 +2,17 @@ package fa.nfa;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.junit.After;
-
 import java.util.Iterator;
-
 import fa.State;
 
 /**
  * @author Antonio Hernandez, Zach Johnston
  *
- *         TODO: Documentation for constructor and class
+ * A representation of Non-Determenistic Finite Automata (NFA)S
  */
 public class NFA implements NFAInterface {
     // **Instance Variables**
