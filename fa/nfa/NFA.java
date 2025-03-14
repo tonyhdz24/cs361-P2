@@ -10,9 +10,12 @@ import java.util.Iterator;
 import fa.State;
 
 /**
- * @author Antonio Hernandez, Zach Johnston
+ * NFA
+ *  A representation of Non-Determenistic Finite Automata (NFA)
+ *  Since ASCII does not contain epsilon as a character, 'e' is a reserved character for
+ *  epsilon transitions
  *
- * A representation of Non-Determenistic Finite Automata (NFA)S
+ * @author Antonio(Tony) Hernandez, Zach Johnston
  */
 public class NFA implements NFAInterface {
     // **Instance Variables**
@@ -91,8 +94,8 @@ public class NFA implements NFAInterface {
 
     @Override
     public void addSigma(char symbol) {
-        // Checking if symbol is already part of alphabet
-        if (sigma.contains(symbol)) {
+        // Checking if symbol is already part of alphabet or epsilon 'e'.
+        if (sigma.contains(symbol) || symbol == 'e') {
             return; // Prevents Duplicate Symbols
         }
         // Adding symbol to sigma set
@@ -219,9 +222,10 @@ public class NFA implements NFAInterface {
     /**
      * Recursive function to explore all reachable states through Epsilon "e" from a
      * given state
-     * First this method gets all transitions off this state by epsilon "e" (Breadth
-     * First), then
-     * through recursion explores how far branches can go (Depth First).
+     *      This works as a depth first search as each call to the function descends the depth of the map
+     *      while using the set to keep track of which states have been visited. The only modification to
+     *      a depth first search is the branching. This is necessary as NFAs can have multiple epsilon transitions
+     *      that may not be traversed in certain circumstances without branching.
      * 
      * @param set - the in progress set
      * @param s   - the current state to explore the "e" transitions

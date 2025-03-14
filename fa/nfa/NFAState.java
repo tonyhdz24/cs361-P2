@@ -2,6 +2,13 @@ package fa.nfa;
 
 import fa.State;
 
+/**
+ * NFAState
+ *  This class represents the NFA version of a state
+ *  States can be a final state, and this class stores the name of the states
+ *
+ * @author Antonio (Tony) Hernadez, Zach Johnston
+ */
 public class NFAState extends State {
     // Instance variable
     boolean isFinal;
