@@ -74,8 +74,6 @@ public class NFA implements NFAInterface {
         // Set that state to be final state
         finalStates.add(newFinalState);
 
-        // ?? We might need update the state’s status to final not just add to set of
-        // ?? final states
         newFinalState.setIsFinal(true);
         return true;
     }
