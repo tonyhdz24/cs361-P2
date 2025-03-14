@@ -10,22 +10,25 @@ import java.util.Iterator;
 import fa.State;
 
 /**
- * @author Antonio Hernandez, Zach Johnston
+ * NFA
+ *  A representation of Non-Deterministic Finite Automata (NFA)
+ *  Since ASCII does not contain epsilon as a character, 'e' is a reserved character for
+ *  epsilon transitions
  *
- * A representation of Non-Determenistic Finite Automata (NFA)S
+ * @author Antonio(Tony) Hernandez, Zach Johnston
  */
 public class NFA implements NFAInterface {
     // **Instance Variables**
     // Store all characters that make up the Alphabet
-    public Set<Character> sigma; // Visibility for testing
+    private Set<Character> sigma; // Visibility for testing
     // All the state in the NFA
-    public Set<NFAState> allStates; // Visibility for testing
+    private Set<NFAState> allStates; // Visibility for testing
     // Final States
-    public Set<NFAState> finalStates; // Visibility for testing
+    private Set<NFAState> finalStates; // Visibility for testing
     // Transitions
-    public Map<NFAState, Map<Character, Set<NFAState>>> transitions; // Visibility for testing
+    private Map<NFAState, Map<Character, Set<NFAState>>> transitions; // Visibility for testing
 
-    public NFAState q0;
+    private NFAState q0;
 
     // **Constructor**
     public NFA() {
@@ -34,6 +37,7 @@ public class NFA implements NFAInterface {
         this.sigma = new LinkedHashSet<>();
         this.finalStates = new LinkedHashSet<>();
         this.transitions = new HashMap<>();
+        this.q0 = new NFAState("temp");
 
         // Adding epsilon to alphabet for e transitions
         this.addSigma('e');
@@ -81,17 +85,17 @@ public class NFA implements NFAInterface {
     @Override
     public boolean setStart(String name) {
         NFAState startState = (NFAState) getState(name);
-        if (startState == null) {
-            return false;
+        if(allStates.contains(startState)) {
+            q0 = startState;
+            return true;
         }
-        q0 = startState;
-        return true;
+        return false;
 
     }
 
     @Override
     public void addSigma(char symbol) {
-        // Checking if symbol is already part of alphabet
+        // Checking if symbol is already part of alphabet.
         if (sigma.contains(symbol)) {
             return; // Prevents Duplicate Symbols
         }
@@ -202,13 +206,13 @@ public class NFA implements NFAInterface {
      * Overloaded method
      * Rebinds the state into an equivalent NFAState to pass to eClosure(NFAState)
      *
-     * @param state - The target state to find all E-Closures for.
+     * @param s - The target state to find all E-Closures for.
      * @return null - on state not found, A set of the E-Closures for the state in
      *         normal operation
      */
-    public Set<NFAState> eClosure(State state) {
+    public Set<NFAState> eClosure(State s) {
         for (NFAState current : allStates) {
-            if (current.equals(state)) {
+            if (current.equals(s)) {
                 return eClosure(current);
             }
         }
@@ -219,9 +223,11 @@ public class NFA implements NFAInterface {
     /**
      * Recursive function to explore all reachable states through Epsilon "e" from a
      * given state
-     * First this method gets all transitions off this state by epsilon "e" (Breadth
-     * First), then
-     * through recursion explores how far branches can go (Depth First).
+     *      This works as a depth first search as each call to the function descends the depth of the map
+     *      while using the set to keep track of which states have been visited. How this method branches
+     *      is the same as DFS (Depth First Search) as each branch reaches its deepest point without looping.
+     *      The set we build keeps track of what states have been visited, and duplicates do not occur when
+     *      two branches hit the same state because of how HashSets don't keep duplicates of the same elements.
      * 
      * @param set - the in progress set
      * @param s   - the current state to explore the "e" transitions
