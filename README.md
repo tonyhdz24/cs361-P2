@@ -42,7 +42,7 @@ Using the project can be done through the tester or through using NFA and its me
 up an NFA with the states and transitions that you desire. Through the method accepts you can also test whether a 
 given input string is valid for your NFA. 
 
-Note: 'e' is a reserved symbol for an epsilon transitions since epsilon isn't an ASCII character.
+Note: 'e' is a reserved symbol for an epsilon transition since epsilon isn't an ASCII character.
 
 ## Sources used
 * Starter Code
